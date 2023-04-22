@@ -4,6 +4,7 @@ package billing.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Setter
@@ -11,13 +12,11 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-//@Table(uniqueConstraints = {
-//        @UniqueConstraint(columnNames = {"serviceName"})
-//})
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "serviceName" }) })
 public class Diagnostic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NonNull
+    @NotEmpty(message = "Service name must not be empty")
     private String serviceName;
 }

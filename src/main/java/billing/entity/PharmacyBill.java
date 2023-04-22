@@ -1,19 +1,19 @@
 package billing.entity;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Setter
+@Getter
 @ToString
 public class PharmacyBill {
 
@@ -38,6 +38,7 @@ public class PharmacyBill {
 
     @NotNull
     @ManyToMany
+    @ToString.Exclude
     private List<Medicine> medicines = new ArrayList<>();
 
     @NotNull

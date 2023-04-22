@@ -14,7 +14,8 @@ public interface DiagnosticService {
     DiagnosticDto get(Long id);
     List<Diagnostic> getAll(short page, String sortBy, byte size);
     List<Diagnostic> getAll();
-    String delete (Long id);;
+    String delete (Long id);
     DiagnosticDto update(DiagnosticDto diagnosticDto);
     Page<Diagnostic> search(String query, short page, String sortBy, byte size);
+    Page<Diagnostic> findDiagnosticNotInOrganization(Long orgId, String query, short page, String sortBy, byte size);
 }

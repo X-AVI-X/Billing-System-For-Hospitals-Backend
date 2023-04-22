@@ -31,9 +31,18 @@ public class MedicineServiceImpl implements MedicineService {
 
     @Override
     public MedicineDto add(MedicineDto medicineDto) {
-        Medicine medicine = Mapper.mapToMedicine(medicineDto);
-        Medicine savedMedicine = medicineRepository.save(medicine);
-        return Mapper.mapToMedicineDto(savedMedicine);
+        if (!medicineRepository.existsByNameAndGenericNameAndFormulationAndStrengthAndVendor(
+                                                                                            medicineDto.getName(),
+                                                                                            medicineDto.getGenericName(),
+                                                                                            medicineDto.getFormulation(),
+                                                                                            medicineDto.getStrength(),
+                                                                                            medicineDto.getVendor())) {
+            Medicine medicine = Mapper.mapToMedicine(medicineDto);
+            Medicine savedMedicine = medicineRepository.save(medicine);
+            return Mapper.mapToMedicineDto(savedMedicine);
+        }else {
+            return null;
+        }
     }
 
     @Override
@@ -79,5 +88,11 @@ public class MedicineServiceImpl implements MedicineService {
             return Mapper.mapToMedicineDto(updatedMedicine);
         }
         else return null;
+    }
+
+    @Override
+    public Page<Medicine> findMedicineNotInOrganization(Long orgId, String query, short page, String sortBy, byte size){
+        Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy));
+        return medicineRepository.findMedicineNotInOrganization(orgId, query, pageable);
     }
 }

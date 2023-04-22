@@ -2,10 +2,8 @@ package billing.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
@@ -47,9 +45,11 @@ public class AppUser {
     private Gender gender;
 
     @NonNull
+    @Column(unique = true)
     private String email;
 
     @NonNull
+    @Column(unique = true)
     private String phone;
 
     @NotNull

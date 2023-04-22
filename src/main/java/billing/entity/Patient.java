@@ -4,7 +4,6 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -27,8 +26,10 @@ public class Patient {
     private String name;
 
     @NonNull
+    @Column(unique = true)
     private String phone;
 
+    @Column(unique = true)
     private String email;
 
     private byte age;

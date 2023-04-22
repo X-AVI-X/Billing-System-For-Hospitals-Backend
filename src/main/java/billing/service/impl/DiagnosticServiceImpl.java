@@ -32,8 +32,11 @@ public class DiagnosticServiceImpl implements DiagnosticService {
 
     @Override
     public DiagnosticDto add(DiagnosticDto diagnosticDto) {
-        Diagnostic diagnostic = modelMapper.map(diagnosticDto, Diagnostic.class);
-        return modelMapper.map(diagnosticRepository.save(diagnostic), DiagnosticDto.class);
+        if (!diagnosticRepository.existsByServiceName(diagnosticDto.getServiceName())) {
+            Diagnostic diagnostic = modelMapper.map(diagnosticDto, Diagnostic.class);
+            return modelMapper.map(diagnosticRepository.save(diagnostic), DiagnosticDto.class);
+        }
+        else return null;
     }
 
     @Override
@@ -87,5 +90,11 @@ public class DiagnosticServiceImpl implements DiagnosticService {
     public Page<Diagnostic> search(String query, short page, String sortBy, byte size) {
         Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy));
         return diagnosticRepository.findByServiceNameContaining(query,pageable);
+    }
+
+    @Override
+    public Page<Diagnostic> findDiagnosticNotInOrganization(Long orgId, String query, short page, String sortBy, byte size){
+        Pageable pageable = PageRequest.of(page,size, Sort.by(sortBy));
+        return diagnosticRepository.findDiagnosticNotInOrganization(orgId, query, pageable);
     }
 }

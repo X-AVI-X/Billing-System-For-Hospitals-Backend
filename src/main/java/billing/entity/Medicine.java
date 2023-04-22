@@ -21,11 +21,12 @@ public class Medicine {
     @NonNull
     private String name;
 
-    @NonNull
     private double price;
 
     @NonNull
     private String genericName;
+
+    private String formulation;
 
     @NonNull
     private String strength;

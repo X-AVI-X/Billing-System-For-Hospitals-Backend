@@ -1,9 +1,9 @@
 package billing.controller;
 
 import billing.dto.LoginDto;
-import billing.dto.SignUpDto;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 
 public interface AuthController {
-    ResponseEntity<?> authenticateUser(LoginDto login);
+//    ResponseEntity<?> authenticateUser(LoginDto login);
+    String generateToken(@RequestBody LoginDto authRequest) throws Exception;
 }

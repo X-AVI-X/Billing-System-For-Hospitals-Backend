@@ -3,6 +3,8 @@ package billing.controller.impl;
 import billing.controller.DiagnosticController;
 import billing.dto.DiagnosticDto;
 import billing.service.DiagnosticService;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +23,16 @@ public class DiagnosticControllerImpl implements DiagnosticController {
     @Override
     @PostMapping("add")
     public ResponseEntity<?> add(@RequestBody @Valid DiagnosticDto diagnosticDto){
-        return ResponseEntity.ok(diagnosticService.add(diagnosticDto));
+        DiagnosticDto savedDiagnosticDto = diagnosticService.add(diagnosticDto);
+        if (savedDiagnosticDto != null){
+            return new ResponseEntity<>(savedDiagnosticDto, HttpStatus.CREATED);
+        }else throw new DuplicateKeyException("Diagnostic Service already exists in the database!");
     }
 
     @Override
     @PostMapping("add/all")
     public ResponseEntity<?> addAll(@RequestBody @Valid List<DiagnosticDto> diagnosticDtoList){
-        return ResponseEntity.ok(diagnosticService.addAll(diagnosticDtoList));
+            return new ResponseEntity<>(diagnosticService.addAll(diagnosticDtoList), HttpStatus.CREATED);
     }
 
     @Override
@@ -64,5 +69,16 @@ public class DiagnosticControllerImpl implements DiagnosticController {
     @PutMapping("update")
     public ResponseEntity<?> update (@RequestBody @Valid DiagnosticDto diagnosticDto){
         return ResponseEntity.ok(diagnosticService.update(diagnosticDto));
+    }
+
+
+    @GetMapping("get/all/{orgId}")
+    public ResponseEntity<?> findDiagnosticNotInOrganization (
+            @RequestParam(value = "query", defaultValue = "") String query,
+            @RequestParam(value="page", defaultValue = "0") short page,
+            @RequestParam(value = "sortBy", defaultValue = "service_name") String sortBy,
+            @RequestParam(defaultValue = "10") byte size,
+            @PathVariable Long orgId){
+        return ResponseEntity.ok(diagnosticService.findDiagnosticNotInOrganization(orgId, query, page, sortBy, size));
     }
 }

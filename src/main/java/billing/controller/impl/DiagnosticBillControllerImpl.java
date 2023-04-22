@@ -19,16 +19,19 @@ public class DiagnosticBillControllerImpl implements DiagnosticBillController {
         this.diagnosticBillService = diagnosticBillService;
     }
 
+    @Override
     @PostMapping("/add")
     public ResponseEntity<?> add (@RequestBody @Valid DiagnosticBillDto diagnosticBillDto){
         return ResponseEntity.ok(diagnosticBillService.add(diagnosticBillDto));
     }
 
+    @Override
     @GetMapping("/view/{id}")
     public ResponseEntity<?> view (@PathVariable Long id){
         return ResponseEntity.ok(diagnosticBillService.viewInvoice(id));
     }
 
+    @Override
     @GetMapping("view/{orgId}/all")
     public Page<?> viewAll (
                                     @PathVariable Long orgId,
@@ -38,6 +41,6 @@ public class DiagnosticBillControllerImpl implements DiagnosticBillController {
                                     @RequestParam(value = "sortOrder", defaultValue = "Sort.Direction.DESC") String sortOrder,
                                     @RequestParam(defaultValue = "10") byte size ){
 
-        return diagnosticBillService.Search(orgId,query,page,size,sortBy, sortOrder);
+        return diagnosticBillService.search(orgId,query,page,size,sortBy, sortOrder);
     }
 }

@@ -29,7 +29,11 @@ public class DiagnosticBillServiceImpl implements DiagnosticBillService {
     private final ModelMapper modelMapper;
 
 
-    public DiagnosticBillServiceImpl(OrgDiagnosticRepository orgDiagnosticRepository, PatientRepository patientRepository, DiagnosticBillRepository diagnosticBillRepository, AppUserRepository appUserRepository, ModelMapper modelMapper) {
+    public DiagnosticBillServiceImpl(OrgDiagnosticRepository orgDiagnosticRepository,
+                                     PatientRepository patientRepository,
+                                     DiagnosticBillRepository diagnosticBillRepository,
+                                     AppUserRepository appUserRepository,
+                                     ModelMapper modelMapper) {
         this.orgDiagnosticRepository = orgDiagnosticRepository;
         this.patientRepository = patientRepository;
         this.diagnosticBillRepository = diagnosticBillRepository;
@@ -41,15 +45,19 @@ public class DiagnosticBillServiceImpl implements DiagnosticBillService {
 
         List<OrgDiagnosticAndDiscount> orgDiagnosticAndDiscounts = new ArrayList<>();
 
-        for (OrgDiagnosticAndDiscountWrapperDto orgDiagnosticAndDiscountWrapperDto : diagnosticBillDto.getOrgDiagnosticAndDiscounts()) {
-            OrgDiagnostic orgDiagnostic = (orgDiagnosticRepository.findById(orgDiagnosticAndDiscountWrapperDto.getOrgDiagnosticId()).orElseThrow(()
-                    -> new ResourceNotFound("Org-Diagnostic id #" + orgDiagnosticAndDiscountWrapperDto.getOrgDiagnosticId() + " invalid")));
+        for (OrgDiagnosticAndDiscountWrapperDto orgDiagnosticAndDiscountWrapperDto :
+                diagnosticBillDto.getOrgDiagnosticAndDiscounts()) {
+            OrgDiagnostic orgDiagnostic = (orgDiagnosticRepository.findById(
+                    orgDiagnosticAndDiscountWrapperDto.getOrgDiagnosticId()).orElseThrow(()
+                    -> new ResourceNotFound(
+                        "Org-Diagnostic id #" + orgDiagnosticAndDiscountWrapperDto.getOrgDiagnosticId() + " invalid")));
 
-            orgDiagnosticAndDiscounts.add(new OrgDiagnosticAndDiscount(null, orgDiagnostic, orgDiagnostic.getPrice(), orgDiagnosticAndDiscountWrapperDto.getDiscount()));
+            orgDiagnosticAndDiscounts.add(new OrgDiagnosticAndDiscount(null,
+                                                                    orgDiagnostic,
+                                                                    orgDiagnostic.getPrice(),
+                                                                    orgDiagnosticAndDiscountWrapperDto.getDiscount()));
             System.out.println(orgDiagnostic);
-
         }
-
         AppUser appUser = appUserRepository.findById(diagnosticBillDto.getAppUserId()).orElseThrow(()
                 -> new ResourceNotFound("AppUser Id #" + diagnosticBillDto.getAppUserId() + " invalid"));
 
@@ -57,11 +65,11 @@ public class DiagnosticBillServiceImpl implements DiagnosticBillService {
                 -> new ResourceNotFound("Patient Id #" + diagnosticBillDto.getPatientId() + " invalid"));
 
         DiagnosticBill diagnosticBill = modelMapper.map(diagnosticBillDto, DiagnosticBill.class);
-        diagnosticBill.setId(null);
-        diagnosticBill.setAppUser(appUser);
-        diagnosticBill.setPatient(patient);
-        diagnosticBill.setOrgDiagnosticAndDiscounts(orgDiagnosticAndDiscounts);
 
+            diagnosticBill.setId(null);
+            diagnosticBill.setAppUser(appUser);
+            diagnosticBill.setPatient(patient);
+            diagnosticBill.setOrgDiagnosticAndDiscounts(orgDiagnosticAndDiscounts);
         DiagnosticBill savedDiagnosticBill = diagnosticBillRepository.save(diagnosticBill);
 
         DiagnosticBillProjection invoice= modelMapper.map(savedDiagnosticBill, DiagnosticBillProjection.class);
@@ -76,7 +84,8 @@ public class DiagnosticBillServiceImpl implements DiagnosticBillService {
     }
 
     public DiagnosticBillProjection viewInvoice (Long id){
-        DiagnosticBillProjection invoice= modelMapper.map(diagnosticBillRepository.findById(id), DiagnosticBillProjection.class);
+        DiagnosticBillProjection invoice= modelMapper.map(diagnosticBillRepository.findById(id),
+                DiagnosticBillProjection.class);
         for (OrgDiagnosticAndDiscount orgDiagnosticAndDiscount: invoice.getOrgDiagnosticAndDiscounts()){
             orgDiagnosticAndDiscount.getOrgDiagnostic().setOrganization(null);
         }
@@ -86,7 +95,7 @@ public class DiagnosticBillServiceImpl implements DiagnosticBillService {
     }
 
     @Override
-    public Page<DiagnosticBill> Search(Long orgId, String query, short pageNo, byte size, String sortBy, String order){
+    public Page<DiagnosticBill> search(Long orgId, String query, short pageNo, byte size, String sortBy, String order){
         Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC,sortBy));
         Page<DiagnosticBill> invoices = diagnosticBillRepository.search(orgId, query, pageable);
 

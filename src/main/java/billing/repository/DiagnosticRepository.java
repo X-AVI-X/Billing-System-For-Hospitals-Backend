@@ -15,6 +15,14 @@ public interface DiagnosticRepository extends JpaRepository<Diagnostic, Long> {
             nativeQuery = true)
     int isDiagnosticPresent (@Param("id") Long id);
 
-//    @Query (value = "select d from Diagnostic d where d.id = CAST(:query AS long)  or d.serviceName like %:query%")
     Page<Diagnostic> findByServiceNameContaining(String query, Pageable paging);
+
+    boolean existsByServiceName(String serviceName);
+
+    @Query(value = "SELECT * FROM diagnostic d WHERE d.service_name LIKE CONCAT('%',:query, '%') and " +
+            "NOT d.id IN (SELECT d.id FROM diagnostic d, org_diagnostic od " +
+            "WHERE d.id = od.diagnostic_id " +
+            "and od.organization_id=:orgId)",
+            nativeQuery = true)
+    Page<Diagnostic> findDiagnosticNotInOrganization (Long orgId, String query, Pageable pageable);
 }

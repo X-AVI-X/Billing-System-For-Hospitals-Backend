@@ -21,18 +21,22 @@ public class Organization {
     private Long id;
 
     @NonNull
+    @Column(unique = true)
     private String name;
 
     @NotEmpty
     private String address;
 
     @NonNull
+    @Column(unique = true)
     private String phone;
 
     @NonNull
+    @Column(unique = true)
     private String email;
 
     @NotEmpty
+    @Column(unique = true)
     @Pattern(regexp = "^(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]\\.[^\\s]{2,})$")
     private String website;
 

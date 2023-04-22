@@ -11,6 +11,7 @@ public interface Mapper {
                 medicineDto.getName(),
                 medicineDto.getPrice(),
                 medicineDto.getGenericName(),
+                medicineDto.getFormulation(),
                 medicineDto.getStrength(),
                 medicineDto.getVendor()
         );
@@ -21,6 +22,7 @@ public interface Mapper {
                 medicine.getName(),
                 medicine.getPrice(),
                 medicine.getGenericName(),
+                medicine.getFormulation(),
                 medicine.getStrength(),
                 medicine.getVendor()
 

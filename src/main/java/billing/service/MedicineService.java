@@ -14,4 +14,6 @@ public interface MedicineService {
     MedicineDto update(MedicineDto medicineDto);
     List<MedicineDto> getAll(short page, String sortBy, byte size);
     Page<Medicine> search(String query, short page, String sortBy, byte size);
+
+    Page<Medicine> findMedicineNotInOrganization(Long orgId, String query, short page, String sortBy, byte size);
 }
