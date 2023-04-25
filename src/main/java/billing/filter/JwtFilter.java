@@ -27,7 +27,6 @@ public class JwtFilter extends OncePerRequestFilter {
         this.service = service;
     }
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
                                     @NotNull HttpServletResponse httpServletResponse,

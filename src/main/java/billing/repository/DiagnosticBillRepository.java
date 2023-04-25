@@ -10,10 +10,10 @@ public interface DiagnosticBillRepository extends JpaRepository<DiagnosticBill, 
     Page<?> findByOrganizationId(Long orgId, Pageable pageable);
 
     @Query(value = "SELECT d from DiagnosticBill d where d.organization.id = :orgId " +
-            "and d.patient.phone like concat('%',:query,'%') " +
+            "and (d.patient.phone like concat('%',:query,'%') " +
             "or d.patient.email like concat('%',:query,'%')" +
             "or d.patient.name like concat('%',:query,'%')" +
             "or cast(d.id AS string) like concat('%',:query,'%')" +
-            "or cast(d.patient.id AS string) like concat('%',:query,'%') ")
+            "or cast(d.patient.id AS string) like concat('%',:query,'%')) ")
     Page<DiagnosticBill> search(Long orgId, String query, Pageable pageable);
 }

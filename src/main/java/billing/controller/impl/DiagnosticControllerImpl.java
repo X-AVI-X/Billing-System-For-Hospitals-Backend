@@ -6,12 +6,14 @@ import billing.service.DiagnosticService;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORG_ADMIN')")
 @RequestMapping("/diagnostic")
 public class DiagnosticControllerImpl implements DiagnosticController {
     private final DiagnosticService diagnosticService;
@@ -21,6 +23,7 @@ public class DiagnosticControllerImpl implements DiagnosticController {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("add")
     public ResponseEntity<?> add(@RequestBody @Valid DiagnosticDto diagnosticDto){
         DiagnosticDto savedDiagnosticDto = diagnosticService.add(diagnosticDto);
@@ -60,12 +63,14 @@ public class DiagnosticControllerImpl implements DiagnosticController {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         return ResponseEntity.ok(diagnosticService.delete(id));
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("update")
     public ResponseEntity<?> update (@RequestBody @Valid DiagnosticDto diagnosticDto){
         return ResponseEntity.ok(diagnosticService.update(diagnosticDto));

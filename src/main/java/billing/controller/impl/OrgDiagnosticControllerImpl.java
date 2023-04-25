@@ -4,12 +4,14 @@ import billing.controller.OrgDiagnosticController;
 import billing.dto.OrgDiagnosticDto;
 import billing.service.OrgDiagnosticService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OORG_ADMIN')")
 @RequestMapping("/org-diagnostic")
 public class OrgDiagnosticControllerImpl implements OrgDiagnosticController {
     private final OrgDiagnosticService orgDiagnosticService;
@@ -25,6 +27,7 @@ public class OrgDiagnosticControllerImpl implements OrgDiagnosticController {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ROLE_ORG_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<?> addAll (@RequestBody @Valid List<OrgDiagnosticDto> orgDiagnosticDtoList) throws Exception {
         return ResponseEntity.ok(orgDiagnosticService.addAll(orgDiagnosticDtoList));
@@ -43,12 +46,14 @@ public class OrgDiagnosticControllerImpl implements OrgDiagnosticController {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ROLE_ORG_ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         return ResponseEntity.ok(orgDiagnosticService.delete(id));
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ROLE_ORG_ADMIN')")
     @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody @Valid OrgDiagnosticDto orgDiagnosticDto) {
         return ResponseEntity.ok(orgDiagnosticService.update(orgDiagnosticDto));

@@ -48,7 +48,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public String delete(Long id) {
-        if (patientRepository.isPatientPresent(id)==1){
+        if (patientRepository.existsById(id)){
             patientRepository.delete(Objects.requireNonNull(patientRepository.findById(id).orElse(null)));
             return "Patient  #"+ id+ " is deleted";
         }

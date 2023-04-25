@@ -15,9 +15,7 @@ public interface OrgDiagnosticRepository extends JpaRepository<OrgDiagnostic, Lo
     @Query(value =
             "select new billing.projection.OrgDiagnosticProjection (o.id, o.price, o.organization.id, d.serviceName) " +
             "from OrgDiagnostic o INNER JOIN Diagnostic d ON o.diagnostic.id = d.id " +
-            "where o.organization.id = :orgId and d.serviceName like concat('%',:query,'%')"
-//            "where service_name like '%mr%';"
-            )
+            "where o.organization.id = :orgId and d.serviceName like concat('%',:query,'%')")
     Page<OrgDiagnosticProjection> search(Long orgId, String query, Pageable pageable);
 
     boolean existsByDiagnosticIdAndOrganizationId(Long diagnosticId, Long organizationId);

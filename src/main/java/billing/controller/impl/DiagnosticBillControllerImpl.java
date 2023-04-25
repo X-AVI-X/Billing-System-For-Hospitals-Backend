@@ -5,24 +5,30 @@ import billing.dto.DiagnosticBillDto;
 import billing.service.DiagnosticBillService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
+@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORG_ADMIN', 'ROLE_DIAGNOSTIC_RECEPTIONIST')")
 @RequestMapping ("/diagnostic-bill")
 public class DiagnosticBillControllerImpl implements DiagnosticBillController {
     private final DiagnosticBillService diagnosticBillService;
+    private final HttpServletRequest httpServletRequest;
 
 
-    public DiagnosticBillControllerImpl(DiagnosticBillService diagnosticBillService) {
+    public DiagnosticBillControllerImpl(DiagnosticBillService diagnosticBillService, HttpServletRequest httpServletRequest) {
         this.diagnosticBillService = diagnosticBillService;
+        this.httpServletRequest = httpServletRequest;
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ROLE_ORG_ADMIN', 'ROLE_DIAGNOSTIC_RECEPTIONIST')")
     @PostMapping("/add")
     public ResponseEntity<?> add (@RequestBody @Valid DiagnosticBillDto diagnosticBillDto){
-        return ResponseEntity.ok(diagnosticBillService.add(diagnosticBillDto));
+        return ResponseEntity.ok(diagnosticBillService.add(httpServletRequest,diagnosticBillDto));
     }
 
     @Override

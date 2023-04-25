@@ -8,7 +8,9 @@ import billing.repository.AppUserRepository;
 import billing.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -36,15 +38,15 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @PostMapping("/login")
-    public String generateToken(@RequestBody LoginDto authRequest) throws Exception {
+    public String generateToken(@RequestBody LoginDto authRequest) throws BadCredentialsException {
         Optional<AppUser> appUser=appUserRepository.findByEmail(authRequest.getEmail());
-//        log.info("User : ",appUser.get().getEmail());
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    authRequest.getEmail(),
+                    authRequest.getPassword())
             );
-        } catch (Exception ex) {
-            throw new Exception("Invalid Email/Password");
+        }catch (BadCredentialsException ex) {
+            throw new BadCredentialsException("Invalid Email/Password");
         }
 
         return jwtUtil.generateToken(authRequest.getEmail(),appUserRepository

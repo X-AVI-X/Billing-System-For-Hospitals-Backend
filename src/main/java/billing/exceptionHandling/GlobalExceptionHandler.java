@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,18 +23,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ResourceNotFound.class)
     private ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFound exception,
                                                                          WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), webRequest.getDescription(false));
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
+                                                                        webRequest.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+/*
+    @ExceptionHandler(Exception.class)
+    private ResponseEntity<ErrorDetails> handleGlobalException(Exception exception,
+                                                               WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), webRequest.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
-
-//    @ExceptionHandler(Exception.class)
-//    private ResponseEntity<ErrorDetails> handleGlobalException(Exception exception,
-//                                                               WebRequest webRequest) {
-//        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), webRequest.getDescription(false));
-//        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
-//
-//    }
+*/
 
     @Override
     protected @NotNull ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
@@ -60,5 +62,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                    webRequest.getDescription(false));
 
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorDetails> handleBadCredentialsException(
+            @NotNull BadCredentialsException ex,
+            @NotNull WebRequest webRequest) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                new Date(),
+                ex.getMessage(),
+                webRequest.getDescription(false));
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 }

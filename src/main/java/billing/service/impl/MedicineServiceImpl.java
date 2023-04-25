@@ -72,7 +72,7 @@ public class MedicineServiceImpl implements MedicineService {
 
     @Override
     public String delete(Long id) {
-        if (medicineRepository.isMedicinePresent(id)==1){
+        if (medicineRepository.existsById(id)){
             medicineRepository.delete(medicineRepository.findById(id).orElseThrow(()
                     ->new ResourceNotFound("Medicine  #"+ id+ " doesn't exists.")));
             return "Medicine  #"+ id+ " is deleted";
@@ -82,7 +82,7 @@ public class MedicineServiceImpl implements MedicineService {
 
     @Override
     public MedicineDto update(MedicineDto medicineDto) {
-        if (medicineRepository.isMedicinePresent(medicineDto.getId())==1){
+        if (medicineRepository.existsById(medicineDto.getId())){
             Medicine updatedMedicine = Mapper.mapToMedicine(medicineDto);
             medicineRepository.save(updatedMedicine);
             return Mapper.mapToMedicineDto(updatedMedicine);

@@ -5,18 +5,19 @@ import billing.dto.OrgDiagnosticAndDiscountWrapperDto;
 import billing.entity.*;
 import billing.exceptionHandling.ResourceNotFound;
 import billing.projection.DiagnosticBillProjection;
-import billing.repository.AppUserRepository;
-import billing.repository.DiagnosticBillRepository;
-import billing.repository.OrgDiagnosticRepository;
-import billing.repository.PatientRepository;
+import billing.repository.*;
 import billing.service.DiagnosticBillService;
+import billing.utils.JwtUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,21 +28,27 @@ public class DiagnosticBillServiceImpl implements DiagnosticBillService {
     private final DiagnosticBillRepository diagnosticBillRepository;
     private final AppUserRepository appUserRepository;
     private final ModelMapper modelMapper;
+    private final OrganizationRepository organizationRepository;
+
+    private final JwtUtil jwtUtil;
 
 
     public DiagnosticBillServiceImpl(OrgDiagnosticRepository orgDiagnosticRepository,
                                      PatientRepository patientRepository,
                                      DiagnosticBillRepository diagnosticBillRepository,
                                      AppUserRepository appUserRepository,
-                                     ModelMapper modelMapper) {
+                                     ModelMapper modelMapper,
+                                     OrganizationRepository organizationRepository, JwtUtil jwtUtil) {
         this.orgDiagnosticRepository = orgDiagnosticRepository;
         this.patientRepository = patientRepository;
         this.diagnosticBillRepository = diagnosticBillRepository;
         this.appUserRepository = appUserRepository;
         this.modelMapper = modelMapper;
+        this.organizationRepository = organizationRepository;
+        this.jwtUtil = jwtUtil;
     }
 @Override
-    public DiagnosticBillProjection add(DiagnosticBillDto diagnosticBillDto) {
+    public DiagnosticBillProjection add(HttpServletRequest httpServletRequest, DiagnosticBillDto diagnosticBillDto) {
 
         List<OrgDiagnosticAndDiscount> orgDiagnosticAndDiscounts = new ArrayList<>();
 
@@ -56,13 +63,15 @@ public class DiagnosticBillServiceImpl implements DiagnosticBillService {
                                                                     orgDiagnostic,
                                                                     orgDiagnostic.getPrice(),
                                                                     orgDiagnosticAndDiscountWrapperDto.getDiscount()));
-            System.out.println(orgDiagnostic);
         }
-        AppUser appUser = appUserRepository.findById(diagnosticBillDto.getAppUserId()).orElseThrow(()
-                -> new ResourceNotFound("AppUser Id #" + diagnosticBillDto.getAppUserId() + " invalid"));
+
+
+        String userEmail = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
+        AppUser appUser   = appUserRepository.findByEmail(userEmail).orElse(null);
 
         Patient patient = patientRepository.findById(diagnosticBillDto.getPatientId()).orElseThrow(()
-                -> new ResourceNotFound("Patient Id #" + diagnosticBillDto.getPatientId() + " invalid"));
+            -> new ResourceNotFound("Patient Id #" + diagnosticBillDto.getPatientId() + " invalid"));
 
         DiagnosticBill diagnosticBill = modelMapper.map(diagnosticBillDto, DiagnosticBill.class);
 
@@ -78,6 +87,8 @@ public class DiagnosticBillServiceImpl implements DiagnosticBillService {
             orgDiagnosticAndDiscount.getOrgDiagnostic().setOrganization(null);
         }
         invoice.getAppUser().setPassword(null);
+        assert appUser != null;
+        invoice.setOrganization(appUser.getOrganization());
         invoice.getAppUser().setOrganization(null);
 
         return invoice;

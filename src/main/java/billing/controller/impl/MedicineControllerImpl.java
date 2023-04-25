@@ -6,12 +6,14 @@ import billing.exceptionHandling.ErrorDetails;
 import billing.service.MedicineService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Date;
 
 @RestController
+@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORG_ADMIN')")
 @RequestMapping("/medicine")
 public class MedicineControllerImpl implements MedicineController {
     private final MedicineService medicineService;
@@ -21,6 +23,7 @@ public class MedicineControllerImpl implements MedicineController {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("add")
     public ResponseEntity<?> add(@RequestBody @Valid MedicineDto medicineDto){
         MedicineDto savedMedicineDto = medicineService.add(medicineDto);
@@ -63,6 +66,7 @@ public class MedicineControllerImpl implements MedicineController {
 //    }
 
     @Override
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("update")
     public ResponseEntity<?> update (@RequestBody @Valid MedicineDto medicineDto){
         return ResponseEntity.ok(medicineService.update(medicineDto));

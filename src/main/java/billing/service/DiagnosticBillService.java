@@ -5,8 +5,10 @@ import billing.entity.DiagnosticBill;
 import billing.projection.DiagnosticBillProjection;
 import org.springframework.data.domain.Page;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface DiagnosticBillService {
-    DiagnosticBillProjection add(DiagnosticBillDto diagnosticBillDto);
+    DiagnosticBillProjection add(HttpServletRequest httpServletRequest, DiagnosticBillDto diagnosticBillDto);
 
     DiagnosticBillProjection viewInvoice (Long id);
 
